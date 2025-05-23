@@ -1,0 +1,22 @@
+global:
+  scrape_interval: 5s
+
+scrape_configs:
+  - job_name: 'spring-boot'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: [ 'host.docker.internal:8080' ]
+        labels:
+          instance: spring-boot
+
+  - job_name: 'kafka'
+    static_configs:
+      - targets: [ 'kafka:7071' ]
+        labels:
+          instance: kafka
+
+  - job_name: 'kafka-exporter'
+    static_configs:
+      - targets: [ 'kafka_exporter:9308' ]
+        labels:
+          instance: kafka-exporter

@@ -1,0 +1,83 @@
+version: '3.7'
+
+services:
+  zookeeper:
+    image: bitnami/zookeeper:3.8
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    networks:
+      - kafka-net
+
+  kafka:
+    image: bitnami/kafka:3.4
+    container_name: kafka
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+      - "7071:7071"
+    environment:
+      - KAFKA_BROKER_ID=1
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://kafka:29092
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://0.0.0.0:9092,PLAINTEXT_INTERNAL://0.0.0.0:29092
+      - KAFKA_INTER_BROKER_LISTENER_NAME=PLAINTEXT_INTERNAL
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+      - KAFKA_OPTS=-javaagent:/jmx_prometheus_javaagent.jar=7071:/etc/jmx/kafka.yml
+    volumes:
+      - ./jmx/kafka.yml:/etc/jmx/kafka.yml
+      - ./jmx/jmx_prometheus_javaagent-0.20.0.jar:/jmx_prometheus_javaagent.jar
+    depends_on:
+      - zookeeper
+    networks:
+      - kafka-net
+
+  kafka_exporter:
+    image: danielqsj/kafka-exporter:v1.9.0
+    container_name: kafka_exporter
+    ports:
+      - "9308:9308"
+    command:
+      - --kafka.server=kafka:29092
+      - --kafka.version=3.4.0
+      - --verbosity=4
+    depends_on:
+      - kafka
+    restart: always
+    networks:
+      - kafka-net
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+    networks:
+      - kafka-net
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/dashboards/kafka:/var/lib/grafana/dashboards/kafka
+      - ./grafana/dashboards/spring-boot:/var/lib/grafana/dashboards/spring-boot
+    networks:
+      - kafka-net
+
+networks:
+  kafka-net:
+    driver: bridge

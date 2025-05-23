@@ -1,0 +1,14 @@
+apiVersion: 1
+
+providers:
+  - name: Kafka Dashboard
+    folder: Kafka Monitoring
+    type: file
+    options:
+      path: /var/lib/grafana/dashboards/kafka
+
+  - name: Spring Boot Dashboard
+    folder: Spring Boot Monitoring
+    type: file
+    options:
+      path: /var/lib/grafana/dashboards/spring-boot
