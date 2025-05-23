@@ -12,7 +12,7 @@ import kotlin.random.Random
 class TestController(
     private val kafkaTemplate: KafkaTemplate<String, Any>
 ) {
-    @PostMapping
+    @PostMapping("/test")
     fun send(@RequestBody member: Member) {
         val totalMessages = 100_000
         val threadCount = 10
