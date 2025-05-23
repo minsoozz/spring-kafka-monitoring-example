@@ -4,6 +4,20 @@ Kafka와 Spring Boot 애플리케이션의 메트릭을 Prometheus로 수집하�
 
 ---
 
+## Overview
+
+### Kafka JMX Overview
+
+![img.png](img.png)
+
+### Kafka Exporter Overview
+
+![img_1.png](img_1.png)
+
+### Spring Boot Overview
+
+![img_2.png](img_2.png)
+
 ## 🧱 구성 요소
 
 | 구성 요소              | 설명                                                           |
