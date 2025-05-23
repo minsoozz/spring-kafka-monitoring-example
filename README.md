@@ -111,4 +111,4 @@ docker-compose up -d
 | Grafana         | [http://localhost:3000](http://localhost:3000) (`admin` / `admin`)                                           |
 | Spring Boot 메트릭 | [http://host.docker.internal:8080/actuator/prometheus](http://host.docker.internal:8080/actuator/prometheus) |
 | Kafka JMX 메트릭   | [http://localhost:7071/metrics](http://localhost:7071/metrics)                                               |
-| 트래픽 테스트 API     | `POST http://localhost:8080/api/test` (JSON Body: Member 객체 포함)                                              |
+| 트래픽 테스트 API     | `POST http://localhost:8080/test` (JSON Body: Member 객체 포함)                                              |
